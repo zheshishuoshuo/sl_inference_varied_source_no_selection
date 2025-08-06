@@ -19,7 +19,7 @@ from typing import Iterable, Sequence
 from scipy.stats import skewnorm, norm
 import numpy as np
 from scipy.stats import norm
-from .utils import mag_likelihood, selection_function
+from .utils import mag_likelihood
 
 from .cached_A import cached_A_interp
 from .make_tabulate.make_tabulate import LensGrid, tabulate_likelihood_grids
@@ -58,7 +58,6 @@ def precompute_grids(
     zl: float = 0.3,
     zs: float = 2.0,
     sigma_m: float | None = None,
-    m_lim: float = 26.5,
 ) -> list[LensGrid]:
     """Convenience wrapper around :func:`tabulate_likelihood_grids`.
 
@@ -74,7 +73,6 @@ def precompute_grids(
         zl=zl,
         zs=zs,
         sigma_m=sigma_m,
-        m_lim=m_lim,
     )
 
 
@@ -132,12 +130,10 @@ def _single_lens_likelihood(
     muB = grid.muB[mask]
 
     # Marginalize over source magnitude
-    selA_ms = selection_function(muA[None, :], grid.m_lim, MS_GRID[:, None], grid.sigma_m)
-    selB_ms = selection_function(muB[None, :], grid.m_lim, MS_GRID[:, None], grid.sigma_m)
     p_magA_ms = mag_likelihood(grid.m1_obs, muA[None, :], MS_GRID[:, None], grid.sigma_m)
     p_magB_ms = mag_likelihood(grid.m2_obs, muB[None, :], MS_GRID[:, None], grid.sigma_m)
     integral_ms = np.trapz(
-        P_MS[:, None] * selA_ms * selB_ms * p_magA_ms * p_magB_ms, MS_GRID, axis=0
+        P_MS[:, None] * p_magA_ms * p_magB_ms, MS_GRID, axis=0
     )
 
     const = detJ * integral_ms

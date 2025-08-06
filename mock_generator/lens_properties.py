@@ -50,7 +50,6 @@ def observed_data(input_df, caustic=False, scatter_Mstar=None):
    计算 lens 的属性，并返回包含源属性的字典
    """
    m_s = input_df['m_s'].values[0]  # [mag]
-   maximum_magnitude = input_df['maximum_magnitude'].values[0]  # [mag]
    beta_unit = input_df['beta_unit'].values[0]  # [kpc]
    logalpha_sps = input_df['logalpha_sps'].values[0]
    logM_star = input_df['logM_star'].values[0]  # [Msun]
@@ -81,17 +80,13 @@ def observed_data(input_df, caustic=False, scatter_Mstar=None):
    logMsps_observed = logM_star_sps + np.random.normal(loc=0.0, scale=scatter_Mstar)  # 添加噪声
 
 
-   # no observed error
-   if magnitude_observedA > maximum_magnitude or magnitude_observedB > maximum_magnitude:
-       properties['is_lensed'] = False
-   else:
-       properties['is_lensed'] = True
+   # 所有生成的样本都被保留，不考虑观测极限
+   properties['is_lensed'] = True
 
    # 添加源属性
    properties['magnitude_observedA'] = magnitude_observedA  # [mag]
    properties['magnitude_observedB'] = magnitude_observedB  # [mag]
    properties['m_s'] = m_s  # [mag]
-   properties['maximum_magnitude'] = maximum_magnitude  # [mag]
    properties['beta_unit'] = beta_unit  # [kpc]
    properties['logalpha_sps'] = logalpha_sps  # [Msun]
    properties['logM_star'] = model.logM_star

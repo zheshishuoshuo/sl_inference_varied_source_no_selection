@@ -1,4 +1,4 @@
-from .utils import selection_function, mag_likelihood
+from .utils import mag_likelihood
 from .lens_model import LensModel
 from .lens_solver import solve_lens_parameters_from_obs, compute_detJ
 from .cached_A import cached_A_interp
@@ -55,7 +55,7 @@ def log_prior(eta):
     return 0.0  # flat prior
 
 def likelihood_single_fast_optimized(
-    di, eta, gridN=35, zl=0.3, zs=2.0, ms=26.0, sigma_m=0.1, m_lim=26.5,
+    di, eta, gridN=35, zl=0.3, zs=2.0, ms=26.0, sigma_m=0.1,
     logMstar_interp=None, detJ_interp=None, use_interp=False
 ):
     xA_obs, xB_obs, logM_sps_obs, logRe_obs, m1_obs, m2_obs = di
@@ -79,8 +79,6 @@ def likelihood_single_fast_optimized(
         try:
             model = LensModel(logM_star=logM_star, logM_halo=logMh, logRe=logRe_obs, zl=zl, zs=zs)
             muA, muB = model.mu_from_rt(xA_obs), model.mu_from_rt(xB_obs)
-            selA = selection_function(muA, m_lim, ms, sigma_m)
-            selB = selection_function(muB, m_lim, ms, sigma_m)
             p_magA = mag_likelihood(m1_obs, muA, ms, sigma_m)
             p_magB = mag_likelihood(m2_obs, muB, ms, sigma_m)
         except:
@@ -92,7 +90,7 @@ def likelihood_single_fast_optimized(
             p_logMh = norm.pdf(logMh, loc=mu_DM_i, scale=sigma)
             p_logalpha = norm.pdf(logalpha, loc=mu_alpha, scale=sigma_alpha)
 
-            Z[i, j] = p_Mstar * p_logMh * p_logalpha * detJ * selA * selB * p_magA * p_magB
+            Z[i, j] = p_Mstar * p_logMh * p_logalpha * detJ * p_magA * p_magB
 
     integral = np.trapz(np.trapz(Z, logalpha_grid, axis=1), logMh_grid)
     return max(integral, 1e-300)

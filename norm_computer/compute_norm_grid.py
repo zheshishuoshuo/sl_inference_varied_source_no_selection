@@ -5,7 +5,6 @@ import pandas as pd
 from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
 from scipy.stats import norm, skewnorm
-from scipy.special import erf
 from ..mock_generator.lens_model import LensModel
 from ..mock_generator.lens_solver import solve_single_lens
 from ..mock_generator.mass_sampler import MODEL_PARAMS, sample_m_s
@@ -63,12 +62,8 @@ def compute_A_phys_eta(
     Mh_range,
     zl=0.3,
     zs=2.0,
-    sigma_m=0.1,
-    m_lim=26.5,
 ):
-    """
-    计算 A(η)：物理归一化因子，考虑所有先验权重
-    """
+    """计算 A(η)：物理归一化因子，考虑所有先验权重"""
     Mh_min, Mh_max = Mh_range
     q_Mh = 1.0 / (Mh_max - Mh_min)
 
@@ -122,12 +117,7 @@ def compute_A_phys_eta(
 
     sel_prob_array = np.zeros(n)
     if np.any(valid_mask):
-        magA = ms_array[valid_mask] - 2.5 * np.log10(muA_array[valid_mask])
-        magB = ms_array[valid_mask] - 2.5 * np.log10(muB_array[valid_mask])
-
-        selA = 0.5 * (1 + erf((m_lim - magA) / (np.sqrt(2) * sigma_m)))
-        selB = 0.5 * (1 + erf((m_lim - magB) / (np.sqrt(2) * sigma_m)))
-        sel_prob_array[valid_mask] = selA * selB
+        sel_prob_array[valid_mask] = 1.0
 
     total = np.sum(sel_prob_array * w_array)
     valid = np.count_nonzero(valid_mask)

@@ -47,9 +47,8 @@ class LensGrid:
         Observed effective radius used when generating the grid.
     m1_obs, m2_obs:
         Observed magnitudes of the two lensed images.
-    sigma_m, m_lim:
-        Measurement scatter and limiting magnitude used in the selection
-        function.
+    sigma_m:
+        Measurement scatter of the image magnitudes.
     """
 
     logMh_grid: np.ndarray
@@ -61,7 +60,6 @@ class LensGrid:
     m1_obs: float
     m2_obs: float
     sigma_m: float
-    m_lim: float
 
 
 def tabulate_likelihood_grids(
@@ -70,7 +68,6 @@ def tabulate_likelihood_grids(
     zl: float = 0.3,
     zs: float = 2.0,
     sigma_m: float = 0.1,
-    m_lim: float = 26.5,
 ) -> List[LensGrid]:
     """Compute grids of lensing quantities required by the likelihood.
 
@@ -85,9 +82,8 @@ def tabulate_likelihood_grids(
         evaluated.
     zl, zs:
         Lens and source redshifts.
-    sigma_m, m_lim:
-        Parameters describing the measurement scatter and limiting magnitude
-        used in the selection function.
+    sigma_m:
+        Measurement scatter of the observed magnitudes.
 
     Returns
     -------
@@ -149,7 +145,6 @@ def tabulate_likelihood_grids(
                 m1_obs=m1_obs,
                 m2_obs=m2_obs,
                 sigma_m=sigma_m,
-                m_lim=m_lim,
             )
         )
 

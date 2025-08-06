@@ -2,16 +2,11 @@ import os
 import numpy as np
 import pandas as pd
 from scipy.stats import norm
-from scipy.special import erf
 from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
 from ..lens_model import LensModel
 from ..lens_solver import solve_single_lens
 from ..mass_sampler import sample_m_s
-
-# ==== 常数 ====
-m_lim = 26.5
-sigma_m = 0.1
 
 # ==== 样本生成函数 ====
 def generate_lens_samples_no_alpha(
@@ -58,15 +53,8 @@ def compute_A_phys_eta(mu_DM, sigma_DM, samples, Mh_range, zl=0.3, zs=2.0):
         if muA <= 0 or muB <= 0 or not np.isfinite(muA * muB):
             continue
 
-        magA = m_s - 2.5 * np.log10(muA)
-        magB = m_s - 2.5 * np.log10(muB)
-
-        sel_prob1 = 0.5 * (1 + erf((m_lim - magA) / (np.sqrt(2) * sigma_m)))
-        sel_prob2 = 0.5 * (1 + erf((m_lim - magB) / (np.sqrt(2) * sigma_m)))
-        sel_prob = sel_prob1 * sel_prob2
-
         w = w_array[i]
-        total += sel_prob * w
+        total += w
         valid += 1
 
     return total / valid if valid > 0 else 0.0
