@@ -5,7 +5,7 @@ Minimal package initialisation exposing the core inference utilities.
 
 from .run_mcmc import run_mcmc
 from .likelihood import log_prior, log_likelihood, log_posterior
-from .utils import selection_function, mag_likelihood
+from .utils import mag_likelihood
 from .plotting import plot_chain
 
 __all__ = [
@@ -13,7 +13,6 @@ __all__ = [
     "log_prior",
     "log_likelihood",
     "log_posterior",
-    "selection_function",
     "mag_likelihood",
     "plot_chain",
 ]

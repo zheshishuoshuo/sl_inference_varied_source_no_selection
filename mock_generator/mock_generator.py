@@ -58,7 +58,7 @@ import multiprocessing
 
 
 def simulate_single_lens(i, samples, beta_samp, logalpha_sps_sample,
-                        maximum_magnitude, zl, zs):
+                        zl, zs):
     input_df = pd.DataFrame({
         'logM_star_sps': [samples['logM_star_sps'][i]],
         'logM_star': [samples['logM_star_sps'][i] + logalpha_sps_sample[i]],
@@ -66,7 +66,6 @@ def simulate_single_lens(i, samples, beta_samp, logalpha_sps_sample,
         'logRe': [samples['logRe'][i]],
         'beta_unit': [beta_samp[i]],
         'm_s': [samples['m_s'][i]],
-        'maximum_magnitude': [maximum_magnitude],
         'logalpha_sps': [logalpha_sps_sample[i]],
         'zl': [zl],
         'zs': [zs]
@@ -76,7 +75,6 @@ def simulate_single_lens(i, samples, beta_samp, logalpha_sps_sample,
 
 def run_mock_simulation(
     n_samples,
-    maximum_magnitude=26.5,
     zl=0.3,
     zs=2.0,
     if_source=False,
@@ -101,7 +99,6 @@ def run_mock_simulation(
                 'logRe': [samples['logRe'][i]],
                 'beta_unit': [beta_samp[i]],
                 'm_s': [samples['m_s'][i]],
-                'maximum_magnitude': [maximum_magnitude],
                 'logalpha_sps': [logalpha_sps_sample[i]],
                 'zl': [zl],
                 'zs': [zs]
@@ -113,7 +110,7 @@ def run_mock_simulation(
         # ===== 并行计算 =====
         args = [
             (i, samples, beta_samp, logalpha_sps_sample,
-             maximum_magnitude, zl, zs)
+             zl, zs)
             for i in range(n_samples)
         ]
 

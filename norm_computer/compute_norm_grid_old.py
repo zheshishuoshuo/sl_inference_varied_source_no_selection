@@ -5,7 +5,6 @@ import pandas as pd
 from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
 from scipy.stats import norm
-from scipy.special import erf
 from ..lens_model import LensModel
 from ..lens_solver import solve_single_lens
 from ..mass_sampler import MODEL_PARAMS, sample_m_s
@@ -63,11 +62,8 @@ def compute_A_phys_eta(
     Mh_range,
     zl=0.3,
     zs=2.0,
-    sigma_m=0.1,
-    m_lim=26.5,
 ):
-    """
-    计算 A(eta)，兼容 halo mass 模型：
+    """计算 A(eta)，兼容 halo mass 模型：
         logMh ~ N(mu_DM + beta_DM * (logM* - 11.4) + xi_DM * (logRe - logRe_model(logM*)), sigma_DM)
     """
     Mh_min, Mh_max = Mh_range
@@ -92,14 +88,7 @@ def compute_A_phys_eta(
         if muA <= 0 or muB <= 0 or not np.isfinite(muA * muB):
             continue
 
-        magA = m_s - 2.5 * np.log10(muA)
-        magB = m_s - 2.5 * np.log10(muB)
-
-        sel_prob1 = 0.5 * (1 + erf((m_lim - magA) / (np.sqrt(2) * sigma_m)))
-        sel_prob2 = 0.5 * (1 + erf((m_lim - magB) / (np.sqrt(2) * sigma_m)))
-        sel_prob = sel_prob1 * sel_prob2
-
-        total += sel_prob * w_i
+        total += w_i
         valid += 1
 
     return total / valid if valid > 0 else 0.0
